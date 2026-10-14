@@ -4,6 +4,8 @@ A small local browser editor for drafting the resume in LaTeX and previewing the
 compiled PDF. The personal resume source stays on this machine and is excluded
 from Git; the generic layout is kept in [`resume-template.tex`](./resume-template.tex).
 
+![Example resume built from resume-template.tex](docs/template-preview.png)
+
 ## Requirements
 
 - Node.js 18 or newer

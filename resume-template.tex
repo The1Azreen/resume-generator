@@ -46,6 +46,10 @@
 \setlength{\tabcolsep}{0in}
 
 \titleformat{\section}{\bfseries \vspace{2pt} \raggedright \large}{}{0em}{}[\color{light-grey}{\titlerule[2pt]} \vspace{-4pt}]
+\titlespacing*{\section}{0pt}{2.2ex plus .5ex minus .2ex}{2ex plus .2ex}
+
+\newcommand{\contactsep}{\hspace{7pt}{\color{light-grey}|}\hspace{7pt}}
+\newcommand{\contact}[2]{#1\hspace{4pt}#2}
 
 \newcommand{\resumeItem}[1]{\item\small{#1 \vspace{-2pt}}}
 \newcommand{\resumeSubheading}[4]{\vspace{-1pt}\item
@@ -65,14 +69,16 @@
 \begin{document}
 
 \begin{center}
-  {\Huge \textbf{Your Name}} \\ \vspace{5pt}
-  \small \faPhone* \texttt{+1 555 555 5555} \hspace{1pt} $|$
-  \hspace{1pt} \faEnvelope \hspace{2pt} \href{mailto:you@example.com}{\texttt{you@example.com}} \hspace{1pt} $|$
-  \hspace{1pt} \faLinkedin \hspace{2pt} \href{https://linkedin.com/in/your-profile}{linkedin.com/in/your-profile} \hspace{1pt} $|$
-  \hspace{1pt} \faGithub \hspace{2pt} \href{https://github.com/your-name}{github.com/your-name}
-  \\\vspace{-3pt}
-  {\small Degree or professional summary}
+  {\Huge \textbf{Your Name}} \\[5pt]
+  {\color{dark-grey}\small Degree or professional summary} \\[5pt]
+  \small
+  \contact{\faPhone*}{+1 555 555 5555} \contactsep
+  \contact{\faEnvelope}{\href{mailto:you@example.com}{you@example.com}} \contactsep
+  \contact{\faGlobe}{\href{https://your-site.example.com}{your-site.example.com}} \\[3pt]
+  \contact{\faLinkedin}{\href{https://linkedin.com/in/your-profile}{linkedin.com/in/your-profile}} \contactsep
+  \contact{\faGithub}{\href{https://github.com/your-name}{github.com/your-name}}
 \end{center}
+\vspace{-14pt}
 
 \section{EXPERIENCE}
 \resumeSubHeadingListStart
