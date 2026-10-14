@@ -1,0 +1,9 @@
+{
+  "name": "resume-generator",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Local LaTeX resume editor with PDF preview",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

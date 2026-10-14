@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>Resume LaTeX Editor</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">LOCAL WORKSPACE</p>
+        <h1>Resume editor</h1>
+      </div>
+      <div class="actions">
+        <span id="status" class="status" role="status">Loading resume…</span>
+        <button id="save" class="button button-secondary" type="button" disabled>Save draft</button>
+        <button id="preview" class="button button-primary" type="button" disabled>Build preview</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <section class="panel editor-panel" aria-labelledby="editor-heading">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">SOURCE</p>
+            <h2 id="editor-heading">LaTeX</h2>
+          </div>
+          <span class="file-label">azreen-resume-updated.tex</span>
+        </div>
+        <textarea id="source" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="LaTeX resume source" disabled></textarea>
+        <p class="hint">Edits are saved locally in this ignored file. Ctrl+S saves, Ctrl+Enter builds the PDF preview.</p>
+      </section>
+
+      <section class="panel preview-panel" aria-labelledby="preview-heading">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">OUTPUT</p>
+            <h2 id="preview-heading">PDF preview</h2>
+          </div>
+          <a id="download" class="download-link" href="/api/preview.pdf" download="resume.pdf" hidden>Download PDF</a>
+        </div>
+        <div id="empty-preview" class="empty-preview">
+          <div class="empty-icon" aria-hidden="true">PDF</div>
+          <h3>Your resume preview will appear here</h3>
+          <p>Save a draft or build a PDF preview from your LaTeX source.</p>
+        </div>
+        <iframe id="pdf" title="Compiled resume PDF preview" hidden></iframe>
+        <pre id="error" class="error-panel" role="alert" hidden></pre>
+      </section>
+    </main>
+  </body>
+</html>

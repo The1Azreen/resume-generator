@@ -1,0 +1,109 @@
+% Resume template with compact, one-page layout
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage{fontawesome5}
+\usepackage[scale=0.90,lf]{FiraMono}
+\usepackage{contour}
+\usepackage[normalem]{ulem}
+\usepackage[T1]{fontenc}
+\usepackage{tgheros}
+
+\definecolor{light-grey}{gray}{0.83}
+\definecolor{dark-grey}{gray}{0.3}
+\definecolor{text-grey}{gray}{.08}
+\color{text-grey}
+\renewcommand*{\familydefault}{\sfdefault}
+\renewcommand{\ULdepth}{1.8pt}
+\contourlength{0.8pt}
+
+\newcommand{\myuline}[1]{%
+  \uline{\phantom{#1}}%
+  \llap{\contour{white}{#1}}%
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{0in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+\urlstyle{same}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+\titleformat{\section}{\bfseries \vspace{2pt} \raggedright \large}{}{0em}{}[\color{light-grey}{\titlerule[2pt]} \vspace{-4pt}]
+
+\newcommand{\resumeItem}[1]{\item\small{#1 \vspace{-2pt}}}
+\newcommand{\resumeSubheading}[4]{\vspace{-1pt}\item
+  \begin{tabular*}{\textwidth}[t]{l@{\extracolsep{\fill}}r}
+    \textbf{#1} & {\color{dark-grey}\small #2}\\
+    \textit{#3} & {\color{dark-grey}\small #4}\\
+  \end{tabular*}\vspace{-6pt}}
+\newcommand{\resumeProjectHeading}[2]{\item
+  \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+    #1 & {\color{dark-grey}#2}\\
+  \end{tabular*}\vspace{-6pt}}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0in,label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-4pt}}
+
+\begin{document}
+
+\begin{center}
+  {\Huge \textbf{Your Name}} \\ \vspace{5pt}
+  \small \faPhone* \texttt{+1 555 555 5555} \hspace{1pt} $|$
+  \hspace{1pt} \faEnvelope \hspace{2pt} \href{mailto:you@example.com}{\texttt{you@example.com}} \hspace{1pt} $|$
+  \hspace{1pt} \faLinkedin \hspace{2pt} \href{https://linkedin.com/in/your-profile}{linkedin.com/in/your-profile} \hspace{1pt} $|$
+  \hspace{1pt} \faGithub \hspace{2pt} \href{https://github.com/your-name}{github.com/your-name}
+  \\\vspace{-3pt}
+  {\small Degree or professional summary}
+\end{center}
+
+\section{EXPERIENCE}
+\resumeSubHeadingListStart
+  \resumeSubheading{Organization Name}{Month Year -- Present}{Job Title}{City, Country}
+  \resumeItemListStart
+    \resumeItem{Describe an achievement, the action you took, and its measurable impact.}
+    \resumeItem{Add a second accomplishment relevant to the role you are targeting.}
+  \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\section{PROJECTS}
+\resumeSubHeadingListStart
+  \resumeProjectHeading{\textbf{Project Name} -- Organization}{Month Year -- Month Year}
+  \resumeItemListStart
+    \resumeItem{Describe the project, the tools you used, and the result.}
+  \resumeItemListEnd
+\resumeSubHeadingListEnd
+
+\section{EDUCATION}
+\resumeSubHeadingListStart
+  \resumeSubheading{University Name}{Month Year -- Month Year}{Degree or Program}{Optional detail}
+\resumeSubHeadingListEnd
+
+\section{SKILLS}
+\begin{itemize}[leftmargin=0in,label={}]
+  \item{\small \textbf{Languages:} Add relevant languages \newline
+  \textbf{Tools:} Add tools and technologies \newline
+  \textbf{Certifications:} Add relevant certifications}
+\end{itemize}
+
+\section{INTERESTS}
+\noindent{\small Add relevant professional interests}
+
+\end{document}
