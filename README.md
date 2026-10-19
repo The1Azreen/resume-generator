@@ -23,12 +23,21 @@ the terminal after installing so `pdflatex` is available on `PATH`.
 npm start
 ```
 
-Open <http://127.0.0.1:3000>. Edit the LaTeX in the left pane, then choose
-**Save draft** or **Build preview**. A successful build appears in the right
-pane and can be downloaded as a PDF. If `azreen-resume-updated.tex` does not
-exist yet, the editor opens the generic starter template; saving creates the
-personal source file.
+Open <http://127.0.0.1:3000>. Pick a document from the dropdown above the
+editor, edit the LaTeX in the left pane, then choose **Save draft** or
+**Build preview**. A successful build appears in the right pane and can be
+downloaded as a PDF.
 
-`azreen-resume-updated.tex` and `.resume-preview/` are ignored by Git. Keep
-personal resume details in the ignored source file, not in the tracked generic
-template.
+| Document | File | Starts from |
+| --- | --- | --- |
+| Resume | `azreen-resume-updated.tex` | `resume-template.tex` |
+| Cover letter | `azreen-cover-letter.tex` | `cover-letter-template.tex` |
+| Resume template | `resume-template.tex` | |
+| Cover letter template | `cover-letter-template.tex` | |
+
+If a personal file does not exist yet, the editor opens its template; saving
+creates the personal file. **Import .tex** loads a file from your computer into
+the editor for the selected document. Nothing is written until you save.
+
+The personal files and `.resume-preview/` are ignored by Git. Keep personal
+details in the ignored files, not in the tracked templates.

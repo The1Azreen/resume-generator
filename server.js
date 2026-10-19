@@ -8,12 +8,25 @@ const execFileAsync = promisify(execFile);
 const host = "127.0.0.1";
 const port = Number(process.env.PORT || 3000);
 const root = __dirname;
-const resumePath = path.join(root, "azreen-resume-updated.tex");
-const templatePath = path.join(root, "resume-template.tex");
-const previewDir = path.join(root, ".resume-preview");
-const previewSourcePath = path.join(previewDir, "resume.tex");
-const previewPdfPath = path.join(previewDir, "resume.pdf");
+const previewRoot = path.join(root, ".resume-preview");
 const maxSourceBytes = 1024 * 1024;
+
+// The only files the editor can read or write. Personal files fall back to their
+// template until the first save creates them.
+const documents = new Map([
+  ["resume", { label: "Resume", file: "azreen-resume-updated.tex", fallback: "resume-template.tex" }],
+  ["cover-letter", { label: "Cover letter", file: "azreen-cover-letter.tex", fallback: "cover-letter-template.tex" }],
+  ["resume-template", { label: "Resume template", file: "resume-template.tex" }],
+  ["cover-letter-template", { label: "Cover letter template", file: "cover-letter-template.tex" }],
+]);
+
+function getDocument(id) {
+  const doc = documents.get(id);
+  if (!doc) {
+    throw Object.assign(new Error(`Unknown document "${id}".`), { statusCode: 400 });
+  }
+  return { id, ...doc, previewDir: path.join(previewRoot, id) };
+}
 const allowedHosts = new Set([`${host}:${port}`, `localhost:${port}`]);
 
 const staticFiles = new Map([
@@ -93,23 +106,23 @@ function readJson(request) {
   });
 }
 
-async function getResumeSource() {
+async function getSource(doc) {
   try {
-    return await fs.promises.readFile(resumePath, "utf8");
+    return await fs.promises.readFile(path.join(root, doc.file), "utf8");
   } catch (error) {
-    if (error.code !== "ENOENT") throw error;
-    return fs.promises.readFile(templatePath, "utf8");
+    if (error.code !== "ENOENT" || !doc.fallback) throw error;
+    return fs.promises.readFile(path.join(root, doc.fallback), "utf8");
   }
 }
 
-async function saveResumeSource(source) {
+async function saveSource(doc, source) {
   if (typeof source !== "string" || source.trim().length === 0) {
-    throw Object.assign(new Error("Resume source must be a non-empty string."), { statusCode: 400 });
+    throw Object.assign(new Error("LaTeX source must be a non-empty string."), { statusCode: 400 });
   }
   if (Buffer.byteLength(source, "utf8") > maxSourceBytes) {
-    throw Object.assign(new Error("Resume source exceeds the 1 MB limit."), { statusCode: 413 });
+    throw Object.assign(new Error("LaTeX source exceeds the 1 MB limit."), { statusCode: 413 });
   }
-  await fs.promises.writeFile(resumePath, source, "utf8");
+  await fs.promises.writeFile(path.join(root, doc.file), source, "utf8");
 }
 
 function compilerLog(error) {
@@ -119,18 +132,19 @@ function compilerLog(error) {
 
 let compileQueue = Promise.resolve();
 
-// Builds share one output directory, so run them one at a time.
-function compileResume(source) {
-  const run = compileQueue.then(() => runPdflatex(source));
+// Run one pdflatex at a time; repeated builds of a document share its output directory.
+function compile(doc, source) {
+  const run = compileQueue.then(() => runPdflatex(doc, source));
   compileQueue = run.catch(() => {});
   return run;
 }
 
-async function runPdflatex(source) {
+async function runPdflatex(doc, source) {
+  const previewDir = doc.previewDir;
   await fs.promises.mkdir(previewDir, { recursive: true });
-  await fs.promises.writeFile(previewSourcePath, source, "utf8");
+  await fs.promises.writeFile(path.join(previewDir, "resume.tex"), source, "utf8");
   // A failed build must not leave the previous PDF behind to be downloaded as if it were current.
-  await fs.promises.rm(previewPdfPath, { force: true });
+  await fs.promises.rm(path.join(previewDir, "resume.pdf"), { force: true });
 
   try {
     await execFileAsync(
@@ -161,8 +175,15 @@ async function runPdflatex(source) {
 async function handleRequest(request, response) {
   const url = new URL(request.url, `http://${host}:${port}`);
 
+  if (request.method === "GET" && url.pathname === "/api/documents") {
+    const list = [...documents].map(([id, doc]) => ({ id, label: doc.label, file: doc.file }));
+    sendJson(response, 200, { documents: list });
+    return;
+  }
+
   if (request.method === "GET" && url.pathname === "/api/source") {
-    sendJson(response, 200, { source: await getResumeSource() });
+    const doc = getDocument(url.searchParams.get("doc") || "resume");
+    sendJson(response, 200, { source: await getSource(doc) });
     return;
   }
 
@@ -172,19 +193,21 @@ async function handleRequest(request, response) {
     if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
       throw Object.assign(new Error("Request body must be a JSON object."), { statusCode: 400 });
     }
-    await saveResumeSource(payload.source);
+    const doc = getDocument(payload.doc);
+    await saveSource(doc, payload.source);
 
     if (url.pathname === "/api/save") {
       sendJson(response, 200, { saved: true });
       return;
     }
 
-    await compileResume(payload.source);
+    await compile(doc, payload.source);
     sendJson(response, 200, { compiled: true });
     return;
   }
 
   if ((request.method === "GET" || request.method === "HEAD") && url.pathname === "/api/preview.pdf") {
+    const previewPdfPath = path.join(getDocument(url.searchParams.get("doc") || "resume").previewDir, "resume.pdf");
     let stats;
     try {
       stats = await fs.promises.stat(previewPdfPath);

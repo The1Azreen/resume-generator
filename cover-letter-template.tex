@@ -1,0 +1,108 @@
+%-------------------------
+% Cover letter template
+% Matches the layout and typography of resume-template.tex.
+% Fill in the details block below, then replace the body paragraphs.
+%-------------------------
+
+\documentclass[letterpaper,11pt]{article}
+
+\usepackage[empty]{fullpage}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage[hidelinks]{hyperref}
+\usepackage[english]{babel}
+\usepackage{fontawesome5}
+\usepackage[scale=0.90,lf]{FiraMono}
+\usepackage{tgheros}
+\renewcommand*{\familydefault}{\sfdefault}
+\usepackage[T1]{fontenc}
+
+\definecolor{light-grey}{gray}{0.83}
+\definecolor{dark-grey}{gray}{0.3}
+\definecolor{text-grey}{gray}{.08}
+\color{text-grey}
+
+\pagestyle{empty}
+\addtolength{\oddsidemargin}{-0.375in}
+\addtolength{\evensidemargin}{0in}
+\addtolength{\textwidth}{0.75in}
+\addtolength{\topmargin}{-.4in}
+\addtolength{\textheight}{0.8in}
+
+\urlstyle{same}
+\raggedright
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{10pt}
+
+%----------DETAILS (edit these)----------
+\newcommand{\myname}{Your Name}
+\newcommand{\mytagline}{Your Title or Degree}
+\newcommand{\myphone}{+00 0000 0000}
+\newcommand{\myemail}{you@example.com}
+\newcommand{\mywebsite}{example.com}
+\newcommand{\mywebsiteurl}{https://example.com}
+\newcommand{\mylinkedin}{linkedin.com/in/your-handle}
+\newcommand{\mygithub}{github.com/your-handle}
+
+\newcommand{\recipient}{Hiring Manager}
+\newcommand{\role}{Role Title}
+\newcommand{\company}{Company Name}
+\newcommand{\letterdate}{\today}
+
+\newcommand{\contactsep}{\hspace{7pt}{\color{light-grey}|}\hspace{7pt}}
+\newcommand{\contact}[2]{#1\hspace{4pt}#2}
+
+\begin{document}
+
+%----------HEADING----------
+\begin{center}
+  {\Huge \textbf{\myname}} \\[5pt]
+  {\color{dark-grey}\small \mytagline} \\[5pt]
+  \small
+  \contact{\faPhone*}{\myphone} \contactsep
+  \contact{\faEnvelope}{\href{mailto:\myemail}{\myemail}} \contactsep
+  \contact{\faGlobe}{\href{\mywebsiteurl}{\mywebsite}} \\[3pt]
+  \contact{\faLinkedin}{\href{https://\mylinkedin}{\mylinkedin}} \contactsep
+  \contact{\faGithub}{\href{https://\mygithub}{\mygithub}}
+\end{center}
+\vspace{-6pt}
+{\color{light-grey}\rule{\textwidth}{2pt}}
+\vspace{4pt}
+
+%----------RECIPIENT----------
+{\color{dark-grey}\letterdate}
+
+\textbf{\company}
+
+\textbf{Re: Application for \role}
+
+Dear \recipient,
+
+%----------BODY----------
+% Opening: the role, where you found it, and a one-line case for why you fit.
+I am writing to apply for the \role{} position at \company. [One sentence on
+your current role or background and the main reason you are a strong match.]
+
+% Middle 1: your most relevant experience, tied to what the role needs.
+[Describe the experience most relevant to this role: what you built, the
+tools you used, and the result. Connect it directly to a requirement in the
+job description.]
+
+% Middle 2: a second strength, a project, or what sets you apart.
+[Add a second example, such as a research role, a side project, or a skill
+the posting emphasises. Show how you work, not just what you know.]
+
+% Why this company: specific, not generic.
+[Explain why \company{} in particular: its products, mission, team, or a
+problem it is working on, and what you would contribute.]
+
+% Close: availability and a call to action.
+Thank you for considering my application. I would welcome the chance to
+discuss how I can contribute to \company. I am available at \myphone{} or
+\href{mailto:\myemail}{\myemail}.
+
+Sincerely,
+
+\vspace{18pt}
+\textbf{\myname}
+
+\end{document}

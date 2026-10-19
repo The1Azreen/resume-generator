@@ -128,6 +128,40 @@ h2 {
   border-bottom: 1px solid var(--border);
 }
 
+.doc-controls {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.doc-picker select {
+  min-height: 32px;
+  max-width: 100%;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  color: #344054;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+}
+
+.button-small {
+  min-height: 32px;
+  padding: 0 10px;
+  font-size: 12px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 .file-label {
   overflow: hidden;
   color: var(--muted);

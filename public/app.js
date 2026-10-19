@@ -6,7 +6,13 @@ const previewFrame = document.querySelector("#pdf");
 const emptyPreview = document.querySelector("#empty-preview");
 const errorPanel = document.querySelector("#error");
 const downloadLink = document.querySelector("#download");
+const documentSelect = document.querySelector("#document");
+const importButton = document.querySelector("#import");
+const importInput = document.querySelector("#import-file");
+const fileLabel = document.querySelector("#file-label");
 
+let documents = [];
+let currentDoc = "resume";
 let savedSource = "";
 let busy = false;
 
@@ -19,10 +25,16 @@ function setBusy(isBusy) {
   busy = isBusy;
   saveButton.disabled = isBusy;
   previewButton.disabled = isBusy;
+  documentSelect.disabled = isBusy;
+  importButton.disabled = isBusy;
 }
 
 function hasUnsavedChanges() {
   return sourceEditor.value !== savedSource;
+}
+
+function confirmDiscard() {
+  return !hasUnsavedChanges() || window.confirm("You have unsaved changes. Discard them?");
 }
 
 function showError(message) {
@@ -46,19 +58,24 @@ async function postSource(url) {
   const response = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ source }),
+    body: JSON.stringify({ doc: currentDoc, source }),
   });
   if (!response.ok) await readError(response);
   // Both endpoints save before doing anything else, so the sent text is on disk even if compiling failed.
   savedSource = source;
 }
 
+function previewUrl() {
+  return `/api/preview.pdf?doc=${encodeURIComponent(currentDoc)}&t=${Date.now()}`;
+}
+
 function showPreview() {
-  const url = `/api/preview.pdf?t=${Date.now()}`;
+  const url = previewUrl();
   previewFrame.src = url;
   previewFrame.hidden = false;
   emptyPreview.hidden = true;
   downloadLink.href = url;
+  downloadLink.download = `${currentDoc}.pdf`;
   downloadLink.hidden = false;
 }
 
@@ -69,9 +86,29 @@ function hidePreview() {
   emptyPreview.hidden = false;
 }
 
+async function loadDocuments() {
+  const response = await fetch("/api/documents");
+  if (!response.ok) await readError(response);
+  ({ documents } = await response.json());
+  documentSelect.replaceChildren(
+    ...documents.map((doc) => new Option(doc.label, doc.id)),
+  );
+  const requested = new URLSearchParams(window.location.search).get("doc");
+  if (documents.some((doc) => doc.id === requested)) currentDoc = requested;
+  documentSelect.value = currentDoc;
+}
+
 async function loadSource() {
+  sourceEditor.disabled = true;
+  setBusy(true);
+  errorPanel.hidden = true;
+  hidePreview();
+  const doc = documents.find((d) => d.id === currentDoc);
+  fileLabel.textContent = doc ? doc.file : "";
+  setStatus(`Loading ${doc ? doc.label.toLowerCase() : "document"}…`);
+
   try {
-    const response = await fetch("/api/source");
+    const response = await fetch(`/api/source?doc=${encodeURIComponent(currentDoc)}`);
     if (!response.ok) await readError(response);
     const payload = await response.json();
     sourceEditor.value = payload.source;
@@ -80,18 +117,48 @@ async function loadSource() {
     setBusy(false);
     setStatus("Ready");
   } catch (error) {
-    setStatus("Could not load resume", "error");
+    // Leave Save/Build disabled: the editor still holds the previous document's text.
+    documentSelect.disabled = false;
+    setStatus("Could not load document", "error");
     showError(error.message);
     return;
   }
 
-  // Show the last successful build, if there is one, instead of an empty pane.
+  // Show this document's last successful build, if there is one, instead of an empty pane.
   try {
-    const response = await fetch("/api/preview.pdf", { method: "HEAD" });
+    const response = await fetch(previewUrl(), { method: "HEAD" });
     if (response.ok) showPreview();
   } catch {
     // No preview yet; keep the placeholder.
   }
+}
+
+async function switchDocument() {
+  if (documentSelect.value === currentDoc) return;
+  if (!confirmDiscard()) {
+    documentSelect.value = currentDoc;
+    return;
+  }
+  currentDoc = documentSelect.value;
+  const url = new URL(window.location.href);
+  url.searchParams.set("doc", currentDoc);
+  window.history.replaceState(null, "", url);
+  await loadSource();
+}
+
+async function importFile() {
+  const [file] = importInput.files;
+  importInput.value = "";
+  if (!file) return;
+  if (file.size > 1024 * 1024) {
+    setStatus("Import failed", "error");
+    showError(`${file.name} is larger than the 1 MB limit.`);
+    return;
+  }
+  if (!confirmDiscard()) return;
+  sourceEditor.value = await file.text();
+  errorPanel.hidden = true;
+  setStatus(`Imported ${file.name} · unsaved`);
 }
 
 async function save() {
@@ -131,6 +198,9 @@ async function buildPreview() {
 
 saveButton.addEventListener("click", save);
 previewButton.addEventListener("click", buildPreview);
+documentSelect.addEventListener("change", switchDocument);
+importButton.addEventListener("click", () => importInput.click());
+importInput.addEventListener("change", importFile);
 
 sourceEditor.addEventListener("input", () => {
   if (busy) return;
@@ -168,4 +238,9 @@ window.addEventListener("beforeunload", (event) => {
   }
 });
 
-loadSource();
+loadDocuments()
+  .then(loadSource)
+  .catch((error) => {
+    setStatus("Could not load documents", "error");
+    showError(error.message);
+  });
