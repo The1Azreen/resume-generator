@@ -23,6 +23,10 @@ the terminal after installing so `pdflatex` is available on `PATH`.
 npm start
 ```
 
+Or double-click **`Resume Editor.vbs`**: it starts the server without a
+command window (if it is not already running) and opens the editor in your
+browser. Use the editor's **Stop server** button to shut it down.
+
 Open <http://127.0.0.1:3000>. Pick a document from the dropdown above the
 editor, edit the LaTeX in the left pane, then choose **Save draft** or
 **Build preview**. A successful build appears in the right pane and can be

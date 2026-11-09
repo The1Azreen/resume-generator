@@ -175,6 +175,17 @@ async function runPdflatex(doc, source) {
 async function handleRequest(request, response) {
   const url = new URL(request.url, `http://${host}:${port}`);
 
+  if (request.method === "POST" && url.pathname === "/api/shutdown") {
+    assertTrustedRequest(request);
+    sendJson(response, 200, { stopping: true });
+    // Let a running build finish so it doesn't leave a half-written PDF behind.
+    compileQueue.then(() => {
+      console.log("Stopped from the editor.");
+      process.exit(0);
+    });
+    return;
+  }
+
   if (request.method === "GET" && url.pathname === "/api/documents") {
     const list = [...documents].map(([id, doc]) => ({ id, label: doc.label, file: doc.file }));
     sendJson(response, 200, { documents: list });

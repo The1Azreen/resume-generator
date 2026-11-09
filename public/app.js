@@ -196,6 +196,36 @@ async function buildPreview() {
   }
 }
 
+async function stopServer() {
+  const message = hasUnsavedChanges()
+    ? "You have unsaved changes. Stop the editor anyway?"
+    : "Stop the editor server? You can start it again from Resume Editor.vbs.";
+  if (!window.confirm(message)) return;
+  try {
+    const response = await fetch("/api/shutdown", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}",
+    });
+    if (!response.ok) await readError(response);
+  } catch (error) {
+    setStatus("Could not stop the server", "error");
+    showError(error.message);
+    return;
+  }
+  // Nothing on the page works once the server is gone.
+  savedSource = sourceEditor.value;
+  sourceEditor.disabled = true;
+  documentSelect.disabled = true;
+  importButton.disabled = true;
+  saveButton.disabled = true;
+  previewButton.disabled = true;
+  stopButton.disabled = true;
+  setStatus("Server stopped. You can close this tab.");
+}
+
+const stopButton = document.querySelector("#stop");
+stopButton.addEventListener("click", stopServer);
 saveButton.addEventListener("click", save);
 previewButton.addEventListener("click", buildPreview);
 documentSelect.addEventListener("change", switchDocument);
